@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { StrapiProduct } from "@/lib/types/strapi";
+import { Product } from "@/types/product";
 import { usePedido } from "@/components/ui/pedido/pedido-context";
 import { AddToPedidoButton } from "./pedido/add-to-pedido-button";
 
 interface ProductCardProps {
-  product: StrapiProduct;
+  product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
@@ -18,6 +18,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const rawUrl =
     firstImage?.formats?.medium?.url ||
     firstImage?.formats?.small?.url ||
+    firstImage?.url ||
     null;
 
   const imageSrc = rawUrl
@@ -29,7 +30,7 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="group rounded-xl border bg-white overflow-hidden transition-all duration-300 hover:shadow-sm">
       
-      {/* Imagen + link */}
+      {/* Imagen */}
       <Link href={`/products/${product.slug}`} className="block">
         <div className="relative aspect-[4/5] bg-gray-50">
           <Image
@@ -54,14 +55,13 @@ export function ProductCard({ product }: ProductCardProps) {
           ${product.price.toLocaleString("es-AR")}
         </div>
 
-      <AddToPedidoButton
-        product={{
-          id: product.id,
-          productName: product.productName,
-          price: product.price,
-        }}
-      />
-
+        <AddToPedidoButton
+          product={{
+            id: product.id,
+            productName: product.productName,
+            price: product.price,
+          }}
+        />
       </div>
     </div>
   );
