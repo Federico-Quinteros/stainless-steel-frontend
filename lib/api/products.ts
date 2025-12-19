@@ -1,4 +1,4 @@
-import { StrapiProduct } from "@/lib/types/strapi";
+import { Product } from "@/lib/types/product";
 
 const API_URL = process.env.STRAPI_API_URL;
 
@@ -7,22 +7,17 @@ if (!API_URL) {
 }
 
 /**
- * Obtener productos
- * - Si se pasa categorySlug → filtra por categoría
- * - Si no → trae todos
+ * Obtener todos los productos (opcionalmente por categoría)
  */
 export async function getProducts(
   categorySlug?: string
-): Promise<StrapiProduct[]> {
+): Promise<Product[]> {
   const params = new URLSearchParams({
     populate: "*",
   });
 
   if (categorySlug) {
-    params.append(
-      "filters[category][slug][$eq]",
-      categorySlug
-    );
+    params.append("filters[category][slug][$eq]", categorySlug);
   }
 
   const res = await fetch(
@@ -31,32 +26,12 @@ export async function getProducts(
   );
 
   if (!res.ok) {
-    console.error("Error Strapi:", await res.text());
+    console.error(await res.text());
     throw new Error("Error al obtener productos");
   }
 
   const json = await res.json();
-
-  if (!json?.data) return [];
-
-  return json.data.map((item: any) => ({
-    id: item.id,
-    productName: item.productName,
-    description: item.description,
-    price: item.price,
-    slug: item.slug,
-    images:
-      item.images?.map((img: any) => ({
-        url: img.url,
-        formats: img.formats,
-      })) ?? [],
-    category: item.category
-      ? {
-          slug: item.category.slug,
-          categoryName: item.category.categoryName,
-        }
-      : null,
-  }));
+  return json.data as Product[];
 }
 
 /**
@@ -64,14 +39,10 @@ export async function getProducts(
  */
 export async function getProductBySlug(
   slug: string
-): Promise<StrapiProduct | null> {
-  const normalizedSlug = decodeURIComponent(slug)
-    .trim()
-    .toLowerCase();
-
+): Promise<Product | null> {
   const params = new URLSearchParams({
     populate: "*",
-    "filters[slug][$eq]": normalizedSlug,
+    "filters[slug][$eq]": slug,
   });
 
   const res = await fetch(
@@ -80,33 +51,15 @@ export async function getProductBySlug(
   );
 
   if (!res.ok) {
-    console.error("Error Strapi:", await res.text());
+    console.error(await res.text());
     return null;
   }
 
   const json = await res.json();
 
-  if (!json?.data || json.data.length === 0)
+  if (!json.data || json.data.length === 0) {
     return null;
+  }
 
-  const item = json.data[0];
-
-  return {
-    id: item.id,
-    productName: item.productName,
-    description: item.description,
-    price: item.price,
-    slug: item.slug,
-    images:
-      item.images?.map((img: any) => ({
-        url: img.url,
-        formats: img.formats,
-      })) ?? [],
-    category: item.category
-      ? {
-          slug: item.category.slug,
-          categoryName: item.category.categoryName,
-        }
-      : null,
-  };
+  return json.data[0] as Product;
 }

@@ -1,30 +1,19 @@
 "use client";
 
 import useSWR from "swr";
-import { StrapiResponse, StrapiProduct } from "@/lib/types/strapi";
+import type { Product } from "@/lib/types/product";
 
-const fetcher = (url: string) =>
-  fetch(url).then((res) => {
-    if (!res.ok) throw new Error("Failed to fetch");
-    return res.json();
-  });
+const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 export function useProducts() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
-  
-  const { data, error, isLoading } = useSWR<StrapiResponse<StrapiProduct>>(
-    `${API_URL}/api/products?populate=*`,
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    }
+  const { data, error, isLoading } = useSWR<Product[]>(
+    "/api/products", // o endpoint interno si usás route handlers
+    fetcher
   );
 
   return {
-    products: data?.data || [],
+    products: data ?? [],
     isLoading,
     error,
-    isEmpty: data?.meta.pagination.total === 0,
   };
 }

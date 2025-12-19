@@ -2,7 +2,7 @@
 
 import { useProducts } from "@/hooks/use-product";
 import { ProductCard } from "./product-card";
-import type { Product } from "@/types/product";
+import type { Product } from "@/lib/types/product";
 
 export function ProductList() {
   const { products, isLoading, error } = useProducts();
@@ -19,7 +19,7 @@ export function ProductList() {
     );
   }
 
-  if (!products || products.length === 0) {
+  if (!products.length) {
     return (
       <div className="text-center py-8 text-muted-foreground">
         No hay productos disponibles

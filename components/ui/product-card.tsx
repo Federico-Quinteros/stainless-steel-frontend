@@ -2,8 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Product } from "@/types/product";
-import { usePedido } from "@/components/ui/pedido/pedido-context";
+import type { Product } from "@/lib/types/product";
 import { AddToPedidoButton } from "./pedido/add-to-pedido-button";
 
 interface ProductCardProps {
@@ -11,9 +10,7 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const { addItem } = usePedido();
-
-  const firstImage = product.images?.[0];
+  const firstImage = product.images[0];
 
   const rawUrl =
     firstImage?.formats?.medium?.url ||
@@ -29,7 +26,6 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <div className="group rounded-xl border bg-white overflow-hidden transition-all duration-300 hover:shadow-sm">
-      
       {/* Imagen */}
       <Link href={`/products/${product.slug}`} className="block">
         <div className="relative aspect-[4/5] bg-gray-50">
