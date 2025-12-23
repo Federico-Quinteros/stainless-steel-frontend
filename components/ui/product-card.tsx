@@ -10,20 +10,25 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  // 1️⃣ prioridad: imageUrl (nuevo sistema)
-  const imageSrc =
+  // 🔹 imagen legacy (Strapi media)
+  const legacyImage =
+    Array.isArray(product.images) && product.images.length > 0
+      ? product.images[0]
+      : null;
+
+  // 🔹 prioridad: imageUrl → legacy → placeholder
+  const rawSrc =
     product.imageUrl ||
-    // 2️⃣ fallback legacy: images (si existen)
-    product.images?.[0]?.formats?.medium?.url ||
-    product.images?.[0]?.formats?.small?.url ||
-    product.images?.[0]?.url ||
-    // 3️⃣ placeholder final
+    legacyImage?.formats?.medium?.url ||
+    legacyImage?.formats?.small?.url ||
+    legacyImage?.url ||
     "/placeholder.svg";
 
+  // 🔹 normalizar URL
   const finalSrc =
-    imageSrc.startsWith("http")
-      ? imageSrc
-      : `${process.env.NEXT_PUBLIC_API_URL}${imageSrc}`;
+    rawSrc.startsWith("http")
+      ? rawSrc
+      : `${process.env.NEXT_PUBLIC_API_URL}${rawSrc}`;
 
   return (
     <div className="group rounded-xl border bg-white overflow-hidden transition-all duration-300 hover:shadow-sm">
