@@ -4,7 +4,10 @@ export interface Product {
   description: string;
   price: number;
   slug: string;
-  images: {
+
+  imageUrl?: string;
+
+  images?: {
     url: string;
     formats?: {
       small?: { url: string };
@@ -12,6 +15,7 @@ export interface Product {
       large?: { url: string };
     };
   }[];
+
   category?: {
     slug: string;
     categoryName: string;
