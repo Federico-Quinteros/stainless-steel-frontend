@@ -5,7 +5,7 @@ export interface Product {
   price: number;
   slug: string;
 
-  imageUrl?: string;
+  imageUrl?: string; 
 
   images?: {
     url: string;
